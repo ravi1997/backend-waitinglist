@@ -34,22 +34,12 @@ def send_sms(mobile,password):
 
 def send_ehospital_init():
     # Data for the POST request
-    data = {
-        'username': 'rpcapi',
-        'password': 'Rpcapi@#123',
-    }
-
-    # Headers for the POST request
-    headers = {
-        'Content-Type': 'application/json'
-    }
-
-    # URL of the service
+    
     url = 'https://ehospitalapi.aiims.edu/patient/init'
+    headers = {'Content-Type': 'application/json'}
+    data = {'username': 'rpcapi','password': 'Rpcapi@#123'}
 
-    # Send the POST request
-    response = requests.post(url, json=data, headers=headers)
-
+    response = requests.post(url, headers=headers, json=data)
     if response.status_code == 200 or response.status_code == 201:
         response_data = response.json()
         # Get the token from the response
@@ -58,6 +48,7 @@ def send_ehospital_init():
         return token
 
     else:
+        print(response.status_code)
         return ""
 
 def send_ehospital_uhid(uhid):

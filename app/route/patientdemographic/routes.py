@@ -28,7 +28,6 @@ def create_patient(user,uhid):
 	
 	patientdemographic = PatientDemographic.query.filter_by(uhid = uhid).one_or_none()
 	if patientdemographic is None:
-		""" 
 		patientDetails = {
 			"dob": "1995-04-26",
 			"fname": "KIRAN",
@@ -52,8 +51,8 @@ def create_patient(user,uhid):
 		)
 		db.session.add(obj)
 		db.session.commit()
-		return jsonify(schema.dump(obj)),200 """
-		patientDetails = send_ehospital_uhid(uhid)
+		return jsonify(schema.dump(obj)),200 
+		# patientDetails = send_ehospital_uhid(uhid)
 		if patientDetails is None:
 			return jsonify({"message":"UHID not found "}),404
 		

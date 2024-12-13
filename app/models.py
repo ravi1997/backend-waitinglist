@@ -189,10 +189,11 @@ class PatientEntry(BaseAttributes):
 	initialDate = db.Column(DateTime, server_default=func.now(), nullable = False)
 	finalDate = db.Column(DateTime, server_default=func.now(), nullable = False)
 	user_id = db.Column(db.Integer, nullable = False)
+	ptSurgery = db.Column(db.String(10), nullable = False)
 	remark = db.Column(db.String(255))
 
 	def __init__(self, patientdemographic_id, diagnosis_id, plan_id, eye_id, priority_id, anesthesia_id,
-				 cabin_id, adviceBy_id, eua_id, short_id,user_id, remark=None,initialDate = None,finalDate = None):
+				 cabin_id, adviceBy_id, eua_id, short_id,user_id,ptSurgery, remark=None,initialDate = None,finalDate = None):
 		self.patientdemographic_id = patientdemographic_id
 		self.diagnosis_id = diagnosis_id
 		self.plan_id = plan_id
@@ -209,6 +210,7 @@ class PatientEntry(BaseAttributes):
 			self.initialDate = initialDate
 		if finalDate is not None:
 			self.finalDate = finalDate
+		self.ptSurgery = ptSurgery
 
 	def __repr__(self):
 		return f"<PatientEntry(id={self.id}, patientdemographic={self.patientdemographic_id}, diagnosis={self.diagnosis_id}, plan={self.plan_id})>"

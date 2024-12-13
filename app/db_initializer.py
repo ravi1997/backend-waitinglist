@@ -1,9 +1,9 @@
 
 
-from app.models import Account, AccountRoles, Building, BuildingFloors, Cadre, Centre, Department, DepartmentCentres, DepartmentUnits,  Designation,  Diagnosis, Floor, FloorRooms, Plan, Role, Room, Unit, User
+from app.models import Account, AccountRoles, Building, BuildingFloors, Cadre, Centre, Department, DepartmentCentres, DepartmentUnits,  Designation,  Diagnosis, Floor, FloorRooms, Role, Room, Unit, User
 from app.extension import db,bcrypt
 import click
-from flask_app import app
+from flask import current_app as app
 
 @click.command('empty-db')
 def empty_db_command():
@@ -21,7 +21,6 @@ def seed_db_command():
 	"""Seed the database with initial data."""
 	create_RPC()
 	create_daignosis()
-	create_plan()
 	create_faculty_cadre()
 	create_user()
 	create_account()	
@@ -182,23 +181,7 @@ def create_daignosis():
 		db.session.rollback()
 		raise
 
-def create_plan():
-	try:
-		plan_surgery = Plan.query.filter_by(value="SURGERY").first()
-		if not plan_surgery:
-			plan_surgery = Plan(
-				value="SURGERY"
-			)
-			db.session.add(plan_surgery)
-			db.session.commit()
-			app.logger.info("Plan Added.")
-		else:
-			app.logger.info("Plan already exist.")
 
-	except Exception as e:
-		app.logger.error(f"Error creating Plan : {str(e)}")
-		db.session.rollback()
-		raise
 
 
 def create_faculty_cadre():

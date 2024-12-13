@@ -173,6 +173,7 @@ def getAllPatient(current_user):
 			pe["remark"]=peJson["remark"]
 			pe["adviceBy"] = f"{advice.firstname} {advice.middlename} {advice.lastname}"
 			pe["cabin"] = f"{cabin.firstname} {cabin.middlename} {cabin.lastname}"
+			pe["ptSurgery"] = peJson["ptSurgery"]
 			patients.append(pe)
 		return jsonify(message="Successfull",patients = patients),200
 	except ValidationError as err:
