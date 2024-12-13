@@ -1,4 +1,5 @@
 from datetime import datetime
+from pprint import pprint
 from flask import jsonify,current_app
 from marshmallow import ValidationError
 from sqlalchemy import func
@@ -138,12 +139,16 @@ def getAllPatient(current_user):
 		user = User.query.filter_by(id = current_user.user_id).first()
 		cadre = Cadre.query.filter_by(id=user.cadre_id).first()
 		if cadre.name == "DOCTOR":
+			pprint(f"user id : {current_user.user_id}")
 			patientEntries = PatientEntry.query.filter(PatientEntry.user_id==current_user.user_id,PatientEntry.deleted==0,PatientEntry.finalDate >= today).all()
 		else:
 			patientEntries = PatientEntry.query.filter(PatientEntry.user_id==user.parent_id,PatientEntry.deleted==0,func.date(PatientEntry.finalDate) >= today).all()
 		peJsons = schema.dump(patientEntries)
 		patients = []
+		pprint(len(patientEntries))
+  
 		for peJson in peJsons:
+			pprint(peJson)
 			patientDemographic = PatientDemographic.query.filter_by(id=peJson['patientdemographic_id']).first()
 			diagnosis = Diagnosis.query.filter_by(id=peJson['diagnosis_id']).first()
 			plan = Plan.query.filter_by(id=peJson['plan_id']).first()

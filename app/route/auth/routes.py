@@ -15,8 +15,8 @@ def index():
     return "This is The waiting list auth route"
 
 
-def delete_session(my_app,jwt):
-    with my_app.app_context():
+def delete_session(jwt):
+    with current_app.app_context():
         # print(jwt)
         token = TokenList.query.filter(
             jwt == str(jwt).lower()
@@ -87,7 +87,7 @@ def login(request_data):
             delete_session,
             trigger="date",
             run_date=datetime.now() + delta,
-            args=[current_app,access_token],
+            args=[access_token],
         )
         user = User.query.filter_by(id=userAccount.user_id).first_or_404()
         return jsonify(

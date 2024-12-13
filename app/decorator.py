@@ -1,7 +1,7 @@
 #decorator
 from functools import wraps
 
-from flask import jsonify, request
+from flask import current_app, jsonify, request
 
 from app.models import Account, AccountRoles, Role, TokenList
 
@@ -12,21 +12,28 @@ def verify_user(f):
 
 		if auth_header and auth_header.startswith('Bearer '):
 			token = auth_header.split(' ')[1]
+			print(f"token : {token}")
+		else:
+			print(auth_header)
 
 		session = TokenList.query.filter_by(jwt=token).first()
 
 		if session is None:
+			current_app.logger.info("Session is expired")
 			return jsonify({"message":"Session expired."}),401
 
 		current_account = Account.query.filter_by(id=session.account_id).first_or_404()
 
 		if current_account.isDeleted():
+			current_app.logger.info("Account is DELETED")
 			return jsonify({"message":"Account is DELETED"}),400
 
 		if current_account.isBlocked():
+			current_app.logger.info("Account is BLOCKED")
 			return jsonify({"message":"Account is BLOCKED"}),400
 				
 		if current_account.isNotVerified():
+			current_app.logger.info("Account is BLOCKED")
 			return jsonify({"message":"Account is not ACTIVE"}),400
 		
 		account_roles = AccountRoles.query.filter_by(account_id = current_account.id)
