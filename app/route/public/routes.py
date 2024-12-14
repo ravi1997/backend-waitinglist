@@ -9,7 +9,7 @@ from app.extension import db,bcrypt
 from flask import jsonify
 
 from app.schema import AccountSchema, BuildingSchema, CadreSchema, DepartmentSchema, DesignationSchema, FloorSchema, RoomSchema, UnitSchema, UserSchema
-from app.util import generate_strong_password, send_sms
+from app.util import generate_strong_password, randomOTP, send_OTP_sms, send_password_sms, send_sms
 from . import public_bp
 
 
@@ -147,6 +147,12 @@ def create_user(request_data):
 
         user = User.query.filter_by(employee_id=employee_id).first()
         if user is None:
+            user_data.otp = randomOTP(6)
+            print(user_data.otp)
+            status_code = send_OTP_sms(user.mobile,user_data.otp)
+            if status_code!=200 and status_code != 201:
+                return jsonify({"message":"Something went wrong. Please try again after some time"}),400
+            
             db.session.add(user_data)
             db.session.commit()
             current_app.logger.info(f"User is created : {employee_id}")
@@ -180,6 +186,14 @@ def create_user(request_data):
             user.cadre_id = user_data.cadre_id
             user.status = user_data.status
             user.verified_by = user_data.verified_by
+            user.otp = randomOTP(6)
+            
+            print(user.otp)
+            
+            status_code = send_OTP_sms(user.mobile,user.otp)
+            if status_code!=200 and status_code != 201:
+                return jsonify({"message":"Something went wrong. Please try again after some time"}),400            
+            
             db.session.commit()
             return (
                 jsonify(
@@ -201,12 +215,17 @@ def create_account(request_data):
     schema = AccountSchema()
 
     try:
+        otp = request_data.pop("otp")
         errors = schema.validate(request_data)
         if errors:
             return jsonify(errors), 400
 
         account_data = schema.load(request_data)
         account_id = account_data.username
+
+        user = User.query.filter_by(id=account_data.user_id,otp=otp).first()
+        if user is None:
+            return jsonify({"message":"OTP is not matched"}),400
 
         account = Account.query.filter_by(username=account_id).first()
         if account is None:
@@ -255,12 +274,38 @@ def forget_password_account(request_data):
     if user.employee_id == emp_id:
         password = generate_strong_password()
         account.password = bcrypt.generate_password_hash(password).decode("utf-8")
-        # Todo : send new password to mobile
         user = User.query.filter_by(id=account.user_id).first()
-        status_code = send_sms(user.mobile,password)
+        status_code = send_password_sms(user.mobile,password)
         if status_code!=200 or status_code != 201:
             return jsonify({"message":"Something went wrong. Please try again after some time"}),400
         account.status = 2
         db.session.commit()
         return jsonify({"message": "Account password has been updated"}), 200
     return jsonify({"message":"emp_id not belong to user"}),400
+
+
+@public_bp.route("/sendOTP", methods=["POST"])
+@verify_body
+def send_OTP(request_data):
+    mobile = request_data["mobile"]
+    user_id = request_data["user_id"]
+
+    if mobile is None:
+        return jsonify({"message":"mobile is required"}),400
+    
+    if user_id is None:
+        return jsonify({"message":"user_id is required"}),400
+    user = User.query.filter_by(id=user_id,mobile=mobile).first()
+    
+    if user is None:
+        return jsonify({"message":"User not found"}),400
+    
+    otp = randomOTP(6)
+    print(otp)
+    status_code = send_OTP_sms(user.mobile,otp)
+    if status_code!=200 and status_code != 201:
+        return jsonify({"message":"Something went wrong. Please try again after some time"}),400
+    user.otp = otp
+    db.session.commit()
+    return jsonify({"message": "OTP has been sent"}), 200
+

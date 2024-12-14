@@ -1,6 +1,6 @@
 {
-    "name": "rpc_waiting_list",
-    "short_name": "rpc_waiting_list",
+    "name": "waiting_list",
+    "short_name": "waiting_list",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

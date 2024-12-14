@@ -406,6 +406,7 @@ class User(BaseAttributes):
 	status = db.Column(db.Integer, server_default="0")
 	parent_id = db.Column(db.Integer, index=True, nullable = True)		
 	parent_status = db.Column(db.Integer, server_default="0")
+	otp = db.Column(db.String(6),nullable=True)
 
 	verified_by = db.Column(db.Integer)
 	verified_date = db.Column(
@@ -426,7 +427,7 @@ class User(BaseAttributes):
 	def __init__(self, firstname,employee_id, email, mobile, middlename = None, lastname = None, 
 				 email2=None, email3=None, mobile2=None, mobile3=None, officeAddress_id=None,
 				 department_id=None, unit_id=None, designation_id=None, cadre_id=None, status=0,
-				 verified_by=None):
+				 verified_by=None,otp=None):
 		self.firstname = firstname.upper()
 		if middlename is not None:
 			self.middlename = middlename.upper()
@@ -447,6 +448,7 @@ class User(BaseAttributes):
 		self.cadre_id = cadre_id
 		self.status = status
 		self.verified_by = verified_by
+		self.otp=otp
 
 	def __repr__(self):
 		return f"USER: (id = {self.id}, fullname = {self.firstname}, employee_id = {self.employee_id}, " \

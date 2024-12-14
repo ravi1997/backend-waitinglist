@@ -6,14 +6,14 @@ import random
 import string
 import requests
 
-def send_sms(mobile,password):
+def send_sms(mobile,message):
     # Data for the POST request
     data = {
         'username': 'Aiims',
         'password': 'Aiims@123',
         'senderid': 'AIIMSD',
         'mobileNos': mobile,
-        'message': f'your new password is {password}. Login to RPC waitinglist',
+        'message': message,
         'templateid1': '1307161579789431013'
     }
 
@@ -30,6 +30,14 @@ def send_sms(mobile,password):
 
     # Return the response from the SMS service
     return response.status_code
+
+def send_password_sms(mobile,password):
+    return send_sms(mobile,f'your new password is {password}. Login to RPC waitinglist')
+
+def send_OTP_sms(mobile,otp):
+    # print("we are here")
+    return 200
+    # return send_sms(mobile,f'your new OTP is {otp}. Login to RPC waitinglist')
 
 
 def send_ehospital_init():
@@ -128,3 +136,7 @@ def generate_strong_password(length=10):
 	
 	return password
 
+
+def randomOTP(length):
+	letters = '0123456789'
+	return ''.join(random.choice(letters) for i in range(length))
