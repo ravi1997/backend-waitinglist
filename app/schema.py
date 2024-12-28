@@ -76,6 +76,14 @@ class ShortSchema(ma.SQLAlchemyAutoSchema):
 		include_relationships = True
 		load_instance = True
 
+
+class DaycareSchema(ma.SQLAlchemyAutoSchema):
+	class Meta:
+		model = Daycare
+		include_fk = True
+		include_relationships = True
+		load_instance = True
+
 class PatientDemographicSchema(ma.SQLAlchemyAutoSchema):
 	class Meta:
 		model = PatientDemographic

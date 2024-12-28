@@ -12,9 +12,8 @@ def verify_user(f):
 
 		if auth_header and auth_header.startswith('Bearer '):
 			token = auth_header.split(' ')[1]
-			print(f"token : {token}")
 		else:
-			print(auth_header)
+			return jsonify({"message":"Session invalid."}),401
 
 		session = TokenList.query.filter_by(jwt=token).first()
 
@@ -53,7 +52,8 @@ def verify_token(f):
 
 		if auth_header and auth_header.startswith('Bearer '):
 			token = auth_header.split(' ')[1]
-
+		else:
+			return jsonify({"message":"Session invalid."}),401
 		session = TokenList.query.filter_by(jwt=token).first()
 
 		if session is None:
@@ -69,7 +69,8 @@ def verify_ADMIN(f):
 
 		if auth_header and auth_header.startswith('Bearer '):
 			token = auth_header.split(' ')[1]
-
+		else:
+			return jsonify({"message":"Session invalid."}),401
 		session = TokenList.query.filter_by(jwt=token).first()
 
 		if session is None:
@@ -103,7 +104,8 @@ def verify_SUPERADMIN(f):
 
 		if auth_header and auth_header.startswith('Bearer '):
 			token = auth_header.split(' ')[1]
-
+		else:
+			return jsonify({"message":"Session invalid."}),401
 		session = TokenList.query.filter_by(jwt=token).first()
 
 		if session is None:
@@ -137,7 +139,8 @@ def verify_SUPERADMIN_or_ADMIN(f):
 
 		if auth_header and auth_header.startswith('Bearer '):
 			token = auth_header.split(' ')[1]
-
+		else:
+			return jsonify({"message":"Session invalid."}),401
 		session = TokenList.query.filter_by(jwt=token).first()
 
 		if session is None:
@@ -171,7 +174,8 @@ def get_role(f):
 
 		if auth_header and auth_header.startswith('Bearer '):
 			token = auth_header.split(' ')[1]
-
+		else:
+			return jsonify({"message":"Session invalid."}),401
 		session = TokenList.query.filter_by(jwt=token).first()
 
 		if session is None:

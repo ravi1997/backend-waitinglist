@@ -149,7 +149,7 @@ def create_user(request_data):
         if user is None:
             user_data.otp = randomOTP(6)
             print(user_data.otp)
-            status_code = send_OTP_sms(user.mobile,user_data.otp)
+            status_code = send_OTP_sms(user_data.mobile,user_data.otp)
             if status_code!=200 and status_code != 201:
                 return jsonify({"message":"Something went wrong. Please try again after some time"}),400
             

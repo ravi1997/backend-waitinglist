@@ -20,6 +20,7 @@ from .route.priority import priority_bp
 from .route.anesthesia import anesthesia_bp
 from .route.eua import eua_bp
 from .route.short import short_bp
+from .route.daycare import daycare_bp
 from .route.account import account_bp
 from .route.patientEntry import patiententry_bp
 from .route.patientdemographic import patientdemographic_bp
@@ -88,6 +89,7 @@ def create_app():
     app.register_blueprint(anesthesia_bp, url_prefix="/waitinglist/anesthesia")
     app.register_blueprint(eua_bp, url_prefix="/waitinglist/eua")
     app.register_blueprint(short_bp, url_prefix="/waitinglist/short")
+    app.register_blueprint(daycare_bp, url_prefix="/waitinglist/daycare")
     app.register_blueprint(cadre_bp, url_prefix="/waitinglist/cadre")
     app.register_blueprint(designation_bp, url_prefix="/waitinglist/designation")
 

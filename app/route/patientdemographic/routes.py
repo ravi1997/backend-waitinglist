@@ -28,7 +28,17 @@ def create_patient(user,uhid):
 	
 	patientdemographic = PatientDemographic.query.filter_by(uhid = uhid).one_or_none()
 	if patientdemographic is None:
-		patientDetails = send_ehospital_uhid(uhid)
+		if current_app.debug:
+			patientDetails = {
+				"p_fname":"Ravinder",
+				"p_mname":"",
+				"p_lname":"Singh",
+				"gender":"Male",
+				"mobile_no":"9899378106",
+				"dob":"1997-02-27"
+			}
+		else:
+			patientDetails = send_ehospital_uhid(uhid)
 		if patientDetails is None:
 			return jsonify({"message":"UHID not found "}),404
 		

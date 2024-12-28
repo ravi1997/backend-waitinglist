@@ -117,6 +117,14 @@ class Short(StringValue):
 	def __init__(self, value):
 		super().__init__(value,self.__class__)
 
+class Daycare(StringValue):
+	__tablename__ = "daycares"
+	id = db.Column(db.Integer,primary_key=True)
+	
+	def __init__(self, value):
+		super().__init__(value,self.__class__)
+
+
 # MAIN MODELS
 class Log(db.Model):
     id = db.Column(db.Integer, primary_key=True)
