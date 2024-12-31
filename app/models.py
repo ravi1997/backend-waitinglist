@@ -127,12 +127,12 @@ class Daycare(StringValue):
 
 # MAIN MODELS
 class Log(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    level = db.Column(db.String(50), nullable=False)
-    message = db.Column(db.String(500), nullable=False)
-    pathname = db.Column(db.String(500), nullable=False)
-    lineno = db.Column(db.Integer, nullable=False)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+	id = db.Column(db.Integer, primary_key=True)
+	level = db.Column(db.String(50), nullable=False)
+	message = db.Column(db.String(500), nullable=False)
+	pathname = db.Column(db.String(500), nullable=False)
+	lineno = db.Column(db.Integer, nullable=False)
+	created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
 
 class PatientDemographic(db.Model):
 	__tablename__ = 'patient_demographics'
@@ -184,24 +184,26 @@ class TokenList(db.Model):
 class PatientEntry(BaseAttributes):
 	__tablename__ = 'patient_entries'
 	id = db.Column(db.Integer, primary_key=True)
-	patientdemographic_id = db.Column(db.Integer, nullable = False)
-	diagnosis_id = db.Column(db.Integer, nullable = False)
-	plan_id = db.Column(db.Integer, nullable = False)
-	eye_id = db.Column(db.Integer, nullable = False)
-	priority_id = db.Column(db.Integer, nullable = False)
-	anesthesia_id = db.Column(db.Integer, nullable = False)
-	eua_id = db.Column(db.Integer, nullable = False)
-	short_id = db.Column(db.Integer, nullable = False)
-	cabin_id = db.Column(db.Integer, nullable = False)
-	adviceBy_id = db.Column(db.Integer, nullable = False)
-	initialDate = db.Column(DateTime, server_default=func.now(), nullable = False)
-	finalDate = db.Column(DateTime, server_default=func.now(), nullable = False)
-	user_id = db.Column(db.Integer, nullable = False)
-	ptSurgery = db.Column(db.String(10), nullable = False)
-	remark = db.Column(db.String(255))
+	patientdemographic_id = db.Column(db.Integer, nullable=True)
+	diagnosis_id = db.Column(db.Integer, nullable=True)
+	plan_id = db.Column(db.Integer, nullable=True)
+	eye_id = db.Column(db.Integer, nullable=True)
+	priority_id = db.Column(db.Integer, nullable=True)
+	anesthesia_id = db.Column(db.Integer, nullable=True)
+	eua_id = db.Column(db.Integer, nullable=True)
+	short_id = db.Column(db.Integer, nullable=True)
+	daycare_id = db.Column(db.Integer, nullable=True)
+	cabin_id = db.Column(db.Integer, nullable=True)
+	adviceBy_id = db.Column(db.Integer, nullable=True)
+	initialDate = db.Column(DateTime, server_default=func.now(), nullable=True)
+	finalDate = db.Column(DateTime, server_default=func.now(), nullable=True)
+	user_id = db.Column(db.Integer, nullable=True)
+	ptSurgery = db.Column(db.String(10), nullable=True)
+	remark = db.Column(db.String(255), nullable=True)
 
-	def __init__(self, patientdemographic_id, diagnosis_id, plan_id, eye_id, priority_id, anesthesia_id,
-				 cabin_id, adviceBy_id, eua_id, short_id,user_id,ptSurgery, remark=None,initialDate = None,finalDate = None):
+	def __init__(self, patientdemographic_id=None, diagnosis_id=None, plan_id=None, eye_id=None, priority_id=None,
+				 anesthesia_id=None, cabin_id=None, adviceBy_id=None, eua_id=None, short_id=None, user_id=None,
+				 ptSurgery=None, remark=None, initialDate=None, finalDate=None,daycare_id=None):
 		self.patientdemographic_id = patientdemographic_id
 		self.diagnosis_id = diagnosis_id
 		self.plan_id = plan_id
@@ -212,6 +214,7 @@ class PatientEntry(BaseAttributes):
 		self.adviceBy_id = adviceBy_id
 		self.eua_id = eua_id
 		self.short_id = short_id
+		self.daycare_id = daycare_id
 		self.remark = remark
 		self.user_id = user_id
 		if initialDate is not None:
@@ -221,7 +224,8 @@ class PatientEntry(BaseAttributes):
 		self.ptSurgery = ptSurgery
 
 	def __repr__(self):
-		return f"<PatientEntry(id={self.id}, patientdemographic={self.patientdemographic_id}, diagnosis={self.diagnosis_id}, plan={self.plan_id})>"
+		return (f"<PatientEntry(id={self.id}, patientdemographic={self.patientdemographic_id}, "
+				f"diagnosis={self.diagnosis_id}, plan={self.plan_id})>")
 
 class Building(BaseAttributes):
 	__tablename__ = "buildings"

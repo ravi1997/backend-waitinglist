@@ -35,7 +35,6 @@ def send_password_sms(mobile,password):
     return send_sms(mobile,f'your new password is {password}. Login to RPC waitinglist')
 
 def send_OTP_sms(mobile,otp):
-    # print("we are here")
     return 200
     # return send_sms(mobile,f'your new OTP is {otp}. Login to RPC waitinglist')
 
@@ -56,7 +55,6 @@ def send_ehospital_init():
         return token
 
     else:
-        print(response.status_code)
         return ""
 
 def send_ehospital_uhid(uhid):

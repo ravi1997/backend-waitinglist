@@ -25,7 +25,7 @@ def delete_session(jwt):
             db.session.delete(token)
             db.session.commit()
         else:
-            print("Not Found")
+            current_app.logger.error("Not Found")
 
 
 @auth_bp.route("/login", methods=["POST"])

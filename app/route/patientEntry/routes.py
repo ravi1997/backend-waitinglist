@@ -1,11 +1,10 @@
 from datetime import datetime
-from pprint import pprint
 from flask import jsonify,current_app
 from marshmallow import ValidationError
 from sqlalchemy import func
 
 from app.decorator import verify_body, verify_user
-from app.models import EUA, Anesthesia, Cadre, Diagnosis, Eye, PatientDemographic, PatientEntry, Plan, Priority, Short, User
+from app.models import EUA, Anesthesia, Cadre, Daycare, Diagnosis, Eye, PatientDemographic, PatientEntry, Plan, Priority, Short, User
 from app.extension import db
 
 from flask import jsonify
@@ -139,46 +138,77 @@ def getAllPatient(current_user):
 		user = User.query.filter_by(id = current_user.user_id).first()
 		cadre = Cadre.query.filter_by(id=user.cadre_id).first()
 		if cadre.name == "DOCTOR":
-			pprint(f"user id : {current_user.user_id}")
 			patientEntries = PatientEntry.query.filter(PatientEntry.user_id==current_user.user_id,PatientEntry.deleted==0,PatientEntry.finalDate >= today).all()
 		else:
 			patientEntries = PatientEntry.query.filter(PatientEntry.user_id==user.parent_id,PatientEntry.deleted==0,func.date(PatientEntry.finalDate) >= today).all()
 		peJsons = schema.dump(patientEntries)
 		patients = []
-		pprint(len(patientEntries))
   
 		for peJson in peJsons:
-			pprint(peJson)
-			patientDemographic = PatientDemographic.query.filter_by(id=peJson['patientdemographic_id']).first()
-			diagnosis = Diagnosis.query.filter_by(id=peJson['diagnosis_id']).first()
-			plan = Plan.query.filter_by(id=peJson['plan_id']).first()
-			eye = Eye.query.filter_by(id=peJson['eye_id']).first()
-			priority = Priority.query.filter_by(id=peJson['priority_id']).first()
-			anesthesia = Anesthesia.query.filter_by(id=peJson['anesthesia_id']).first()
-			eua = EUA.query.filter_by(id=peJson['eua_id']).first()
-			short = Short.query.filter_by(id=peJson['short_id']).first()
-			cabin = User.query.filter_by(id=peJson['cabin_id']).first()
-			advice = User.query.filter_by(id=peJson['adviceBy_id']).first()
-			
 			pe = {}
-			pe["patientDemographic"]=pdschema.dump(patientDemographic)
-			pe["diagnosis"]=diagnosis.value
-			pe["plan"]=plan.value
-			pe["eye"]=eye.value
-			pe["priority"]=priority.value
-			pe["anesthesia"]=anesthesia.value
-			pe["eua"]=eua.value
-			pe["short"]=short.value
+			if 'patientdemographic_id' in peJson:
+				patientDemographic = PatientDemographic.query.filter_by(id=peJson['patientdemographic_id']).first()
+				if patientDemographic is not None:
+					pe["patientDemographic"]=pdschema.dump(patientDemographic)
+
+			if 'diagnosis_id' in peJson and peJson['diagnosis_id'] is not None:
+				diagnosis = Diagnosis.query.filter_by(id=peJson['diagnosis_id']).first()
+				if diagnosis is not None:
+					pe["diagnosis"]=diagnosis.value
+	
+			if 'plan_id' in peJson and peJson['plan_id'] is not None:
+				plan = Plan.query.filter_by(id=peJson['plan_id']).first()
+				if plan is not None:
+					pe["plan"]=plan.value
+			
+			if 'eye_id' in peJson and peJson['eye_id'] is not None:
+				eye = Eye.query.filter_by(id=peJson['eye_id']).first()
+				if eye is not None:
+					pe["eye"]=eye.value
+			
+			if 'priority_id' in peJson and peJson['priority_id'] is not None:
+				priority = Priority.query.filter_by(id=peJson['priority_id']).first()
+				if priority is not None:
+					pe["priority"]=priority.value
+
+			if 'anesthesia_id' in peJson and peJson['anesthesia_id'] is not None:
+				anesthesia = Anesthesia.query.filter_by(id=peJson['anesthesia_id']).first()
+				if anesthesia is not None:
+					pe["anesthesia"]=anesthesia.value
+
+			if 'eua_id' in peJson and peJson['eua_id'] is not None:
+				eua = EUA.query.filter_by(id=peJson['eua_id']).first()
+				if eua is not None:
+					pe["eua"]=eua.value
+			
+			if 'short_id' in peJson and peJson['short_id'] is not None:
+				short = Short.query.filter_by(id=peJson['short_id']).first()
+				if short is not None:
+					pe["short"]=short.value
+
+			if 'daycare_id' in peJson and peJson['daycare_id'] is not None:
+				daycare = Daycare.query.filter_by(id=peJson['daycare_id']).first()
+				if daycare is not None:
+					pe["daycare"]=daycare.value
+
+
+			if 'cabin_id' in peJson and peJson['cabin_id'] is not None:
+				cabin = User.query.filter_by(id=peJson['cabin_id']).first()
+				if cabin is not None:
+					pe["cabin_id"]=peJson["cabin_id"]
+					pe["cabin"] = f"{cabin.firstname} {cabin.middlename} {cabin.lastname}"
+					
+			if 'adviceBy_id' in peJson and peJson['adviceBy_id'] is not None:
+				advice = User.query.filter_by(id=peJson['adviceBy_id']).first()
+				if advice is not None:
+					pe["adviceBy_id"]=peJson["adviceBy_id"]
+					pe["adviceBy"] = f"{advice.firstname} {advice.middlename} {advice.lastname}"
+					
 			pe["id"]=peJson["id"]
-			pe["cabin_id"]=peJson["cabin_id"]
-			pe["adviceBy_id"]=peJson["adviceBy_id"]
 			pe["initialDate"]=peJson["initialDate"]
 			pe["finalDate"]=peJson["finalDate"]
 			pe["user_id"]=peJson["user_id"]
 			pe["remark"]=peJson["remark"]
-			pe["adviceBy"] = f"{advice.firstname} {advice.middlename} {advice.lastname}"
-			pe["cabin"] = f"{cabin.firstname} {cabin.middlename} {cabin.lastname}"
-			pe["ptSurgery"] = peJson["ptSurgery"]
 			patients.append(pe)
 		return jsonify(message="Successfull",patients = patients),200
 	except ValidationError as err:
